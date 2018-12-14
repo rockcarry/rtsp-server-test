@@ -1,0 +1,64 @@
+/**********
+This library is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
+
+This library is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this library; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+**********/
+// "liveMedia"
+// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
+// on demand, from an WAV audio live.
+// Implementation
+
+#include "WAVAudioLiveServerMediaSubsession.hh"
+#include "WAVLiveFramedSource.hh"
+#include "uLawAudioFilter.hh"
+#include "SimpleRTPSink.hh"
+
+WAVAudioLiveServerMediaSubsession*
+WAVAudioLiveServerMediaSubsession::createNew(UsageEnvironment& env, void *ctxt, Boolean reuseFirstSource) {
+  return new WAVAudioLiveServerMediaSubsession(env, ctxt, reuseFirstSource);
+}
+
+WAVAudioLiveServerMediaSubsession
+::WAVAudioLiveServerMediaSubsession(UsageEnvironment& env, void *ctxt, Boolean reuseFirstSource)
+  : OnDemandServerMediaSubsession(env, reuseFirstSource), mContext(ctxt) {
+}
+
+WAVAudioLiveServerMediaSubsession::~WAVAudioLiveServerMediaSubsession() {
+}
+
+FramedSource* WAVAudioLiveServerMediaSubsession
+::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
+  fAudioFormat = WA_PCMA;
+  fBitsPerSample = 16;
+  fSamplingFrequency = 8000;
+  fNumChannels = 1;
+  return WAVLiveFramedSource::createNew(envir(), mContext);
+}
+
+RTPSink* WAVAudioLiveServerMediaSubsession
+::createNewRTPSink(Groupsock* rtpGroupsock,
+                   unsigned char rtpPayloadTypeIfDynamic,
+                   FramedSource* inputSource) {
+  char const* mimeType;
+  unsigned char payloadFormatCode = rtpPayloadTypeIfDynamic;
+  if (fAudioFormat == WA_PCMA) {
+    mimeType = "PCMA";
+    if (fSamplingFrequency == 8000 && fNumChannels == 1) {
+      payloadFormatCode = 8;
+    }
+  }
+  return SimpleRTPSink::createNew(envir(), rtpGroupsock,
+                    payloadFormatCode, fSamplingFrequency,
+                    "audio", mimeType, fNumChannels);
+}
