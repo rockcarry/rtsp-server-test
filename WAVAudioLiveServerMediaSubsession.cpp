@@ -39,26 +39,25 @@ WAVAudioLiveServerMediaSubsession::~WAVAudioLiveServerMediaSubsession() {
 
 FramedSource* WAVAudioLiveServerMediaSubsession
 ::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
-  fAudioFormat = WA_PCMA;
-  fBitsPerSample = 16;
-  fSamplingFrequency = 8000;
-  fNumChannels = 1;
-  return WAVLiveFramedSource::createNew(envir(), mContext);
+  WAVLiveFramedSource *source = WAVLiveFramedSource::createNew(envir(), mContext);
+  estBitrate = (source->samplingFrequency() * 8 + 500) / 1000;
+  return source;
 }
 
 RTPSink* WAVAudioLiveServerMediaSubsession
 ::createNewRTPSink(Groupsock* rtpGroupsock,
                    unsigned char rtpPayloadTypeIfDynamic,
                    FramedSource* inputSource) {
+  WAVLiveFramedSource *source = (WAVLiveFramedSource*)inputSource;
   char const* mimeType;
   unsigned char payloadFormatCode = rtpPayloadTypeIfDynamic;
-  if (fAudioFormat == WA_PCMA) {
+  if (source->audioFormat() == WA_PCMA) {
     mimeType = "PCMA";
-    if (fSamplingFrequency == 8000 && fNumChannels == 1) {
+    if (source->samplingFrequency() == 8000 && source->numChannels() == 1) {
       payloadFormatCode = 8;
     }
   }
   return SimpleRTPSink::createNew(envir(), rtpGroupsock,
-                    payloadFormatCode, fSamplingFrequency,
-                    "audio", mimeType, fNumChannels);
+                    payloadFormatCode, source->samplingFrequency(),
+                    "audio", mimeType, source->numChannels());
 }

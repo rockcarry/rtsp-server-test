@@ -21,8 +21,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _WAV_FRAMED_LIVE_SOURCE_HH
 #define _WAV_FRAMED_LIVE_SOURCE_HH
 
-#ifndef _AUDIO_INPUT_DEVICE_HH
-#include "AudioInputDevice.hh"
+#ifndef _FRAMED_SOURCE_HH
+#include "FramedSource.hh"
 #endif
 
 typedef enum {
@@ -33,21 +33,25 @@ typedef enum {
   WA_UNKNOWN
 } WAV_AUDIO_FORMAT;
 
-class WAVLiveFramedSource: public AudioInputDevice {
+class WAVLiveFramedSource: public FramedSource {
 public:
   static WAVLiveFramedSource* createNew(UsageEnvironment& env, void* ctxt);
+  unsigned char audioFormat() const { return fAudioFormat; }
+  unsigned char bitsPerSample() const { return fBitsPerSample; }
+  unsigned char numChannels() const { return fNumChannels; }
+  unsigned samplingFrequency() const { return fSamplingFrequency; }
 
 protected:
   WAVLiveFramedSource(UsageEnvironment& env, void* ctxt);
   virtual ~WAVLiveFramedSource();
 
-protected:
+private:
   void* mContext;
+  unsigned char fAudioFormat, fBitsPerSample, fNumChannels;
+  unsigned fSamplingFrequency;
 
 private:
   virtual void doGetNextFrame();
-  virtual Boolean setInputPort(int portIndex);
-  virtual double getAverageLevel() const;
 };
 
 #endif

@@ -20,7 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
-#include "H265VideoLiveServerMediaSubsession.hh"
+#include "H26XVideoLiveServerMediaSubsession.hh"
 #include "WAVAudioLiveServerMediaSubsession.hh"
 #include "OnDemandRTSPServer.h"
 
@@ -54,7 +54,7 @@ int start_rtsp_server(void *ctxt, char *pexit) {
 #endif
 
   // Create the RTSP server:
-  RTSPServer* rtspServer = RTSPServer::createNew(*env, 554, authDB, 30);
+  RTSPServer* rtspServer = RTSPServer::createNew(*env, 554, authDB, 10);
   if (rtspServer == NULL) {
     *env << "Failed to create RTSP server: " << env->getResultMsg() << "\n";
     exit(1);
@@ -68,14 +68,13 @@ int start_rtsp_server(void *ctxt, char *pexit) {
   // "ServerMediaSession" object, plus one or more
   // "ServerMediaSubsession" objects for each audio/video substream.
 
-  // A H.265 + G726 video elementary stream:
+  // A H264/H265 + G711a video elementary stream:
   {
     char const* streamName = "video0";
     ServerMediaSession* sms= ServerMediaSession::createNew(*env, streamName, streamName, descriptionString);
-    sms->addSubsession(H265VideoLiveServerMediaSubsession::createNew(*env, ctxt, reuseFirstSource));
+    sms->addSubsession(H26XVideoLiveServerMediaSubsession::createNew(*env, ctxt, reuseFirstSource));
     sms->addSubsession(WAVAudioLiveServerMediaSubsession ::createNew(*env, ctxt, reuseFirstSource));
     rtspServer->addServerMediaSession(sms);
-
     announceStream(rtspServer, sms, streamName);
   }
 

@@ -19,26 +19,26 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include <semaphore.h>
-#include "H265LiveFramedSource.hh"
+#include "H26XLiveFramedSource.hh"
 
 extern "C" int ipcam_get_vstream(void *ctxt, uint8_t *buf, int size, int *ndata, uint64_t *pts, int *duration);
 
 ////////// FramedFileSource //////////
 
-H265LiveFramedSource*
-H265LiveFramedSource::createNew(UsageEnvironment& env, void* ctxt) {
-    H265LiveFramedSource* newSource = new H265LiveFramedSource(env, ctxt);
+H26XLiveFramedSource*
+H26XLiveFramedSource::createNew(UsageEnvironment& env, void* ctxt) {
+    H26XLiveFramedSource* newSource = new H26XLiveFramedSource(env, ctxt);
     return newSource;
 }
 
-H265LiveFramedSource::H265LiveFramedSource(UsageEnvironment& env, void* ctxt)
+H26XLiveFramedSource::H26XLiveFramedSource(UsageEnvironment& env, void* ctxt)
     : FramedSource(env), mContext(ctxt) {
 }
 
-H265LiveFramedSource::~H265LiveFramedSource() {
+H26XLiveFramedSource::~H26XLiveFramedSource() {
 }
 
-void H265LiveFramedSource::doGetNextFrame() {
+void H26XLiveFramedSource::doGetNextFrame() {
     uint64_t pts  ;
     int      ndata;
     int      ncopy;

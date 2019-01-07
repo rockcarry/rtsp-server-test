@@ -40,14 +40,6 @@ protected: // redefined virtual functions
                                     unsigned char rtpPayloadTypeIfDynamic,
                                     FramedSource* inputSource);
 
-protected:
-  // The following parameters of the input stream are set after
-  // "createNewStreamSource" is called:
-  unsigned char fAudioFormat;
-  unsigned char fBitsPerSample;
-  unsigned fSamplingFrequency;
-  unsigned fNumChannels;
-
 private:
   void* mContext;
 };

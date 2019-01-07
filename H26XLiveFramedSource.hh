@@ -18,22 +18,22 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Framed File Sources
 // C++ header
 
-#ifndef _H265_FRAMED_LIVE_SOURCE_HH
-#define _H265_FRAMED_LIVE_SOURCE_HH
+#ifndef _H26X_FRAMED_LIVE_SOURCE_HH
+#define _H26X_FRAMED_LIVE_SOURCE_HH
 
 #ifndef _FRAMED_SOURCE_HH
 #include "FramedSource.hh"
 #endif
 
-class H265LiveFramedSource: public FramedSource {
+class H26XLiveFramedSource: public FramedSource {
 public:
-  static H265LiveFramedSource* createNew(UsageEnvironment& env,void* ctxt);
+  static H26XLiveFramedSource* createNew(UsageEnvironment& env,void* ctxt);
 
 protected:
-  H265LiveFramedSource(UsageEnvironment& env, void* ctxt); // abstract base class
-  virtual ~H265LiveFramedSource();
+  H26XLiveFramedSource(UsageEnvironment& env, void* ctxt); // abstract base class
+  virtual ~H26XLiveFramedSource();
 
-protected:
+private:
   void* mContext;
 
 private:

@@ -29,10 +29,11 @@ WAVLiveFramedSource* WAVLiveFramedSource::createNew(UsageEnvironment& env, void*
 }
 
 WAVLiveFramedSource::WAVLiveFramedSource(UsageEnvironment& env, void* ctxt)
-  : AudioInputDevice(env, 0, 0, 0, 0), mContext(ctxt) {
+  : FramedSource(env), mContext(ctxt) {
+  fAudioFormat = WA_UNKNOWN;
+  fBitsPerSample = 16;
   fNumChannels = 1;
   fSamplingFrequency = 8000;
-  fBitsPerSample = 16;
 }
 
 WAVLiveFramedSource::~WAVLiveFramedSource() {
@@ -55,12 +56,4 @@ void WAVLiveFramedSource::doGetNextFrame() {
 
     // To avoid possible infinite recursion, we need to return to the event loop to do this:
     nextTask() = envir().taskScheduler().scheduleDelayedTask(0, (TaskFunc*)FramedSource::afterGetting, this);
-}
-
-Boolean WAVLiveFramedSource::setInputPort(int /*portIndex*/) {
-  return True;
-}
-
-double WAVLiveFramedSource::getAverageLevel() const {
-  return 0.0;//##### fix this later
 }
