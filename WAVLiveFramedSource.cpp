@@ -29,7 +29,7 @@ WAVLiveFramedSource* WAVLiveFramedSource::createNew(UsageEnvironment& env, void*
 }
 
 WAVLiveFramedSource::WAVLiveFramedSource(UsageEnvironment& env, void* ctxt)
-  : FramedSource(env), mContext(ctxt) {
+  : FramedSource(env), mContext(ctxt), mMaxFrameSize(0) {
   fAudioFormat = WA_UNKNOWN;
   fBitsPerSample = 16;
   fNumChannels = 1;
@@ -52,6 +52,7 @@ void WAVLiveFramedSource::doGetNextFrame() {
         fPresentationTime.tv_sec  = pts / 1000000;
         fPresentationTime.tv_usec = pts % 1000000;
         fDurationInMicroseconds   = duration;
+        if (mMaxFrameSize < fFrameSize) mMaxFrameSize = fFrameSize;
     }
 
     // To avoid possible infinite recursion, we need to return to the event loop to do this:

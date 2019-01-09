@@ -40,6 +40,7 @@ public:
   unsigned char bitsPerSample() const { return fBitsPerSample; }
   unsigned char numChannels() const { return fNumChannels; }
   unsigned samplingFrequency() const { return fSamplingFrequency; }
+  virtual unsigned maxFrameSize() const { return mMaxFrameSize; }
 
 protected:
   WAVLiveFramedSource(UsageEnvironment& env, void* ctxt);
@@ -49,6 +50,7 @@ private:
   void* mContext;
   unsigned char fAudioFormat, fBitsPerSample, fNumChannels;
   unsigned fSamplingFrequency;
+  unsigned mMaxFrameSize;
 
 private:
   virtual void doGetNextFrame();

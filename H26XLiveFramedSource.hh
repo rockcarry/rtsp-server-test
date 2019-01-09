@@ -28,13 +28,15 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 class H26XLiveFramedSource: public FramedSource {
 public:
   static H26XLiveFramedSource* createNew(UsageEnvironment& env,void* ctxt);
+  virtual unsigned maxFrameSize() const { return mMaxFrameSize; }
 
 protected:
   H26XLiveFramedSource(UsageEnvironment& env, void* ctxt); // abstract base class
   virtual ~H26XLiveFramedSource();
 
 private:
-  void* mContext;
+  void*    mContext;
+  unsigned mMaxFrameSize;
 
 private:
   virtual void doGetNextFrame();

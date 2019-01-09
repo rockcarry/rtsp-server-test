@@ -32,7 +32,7 @@ H26XLiveFramedSource::createNew(UsageEnvironment& env, void* ctxt) {
 }
 
 H26XLiveFramedSource::H26XLiveFramedSource(UsageEnvironment& env, void* ctxt)
-    : FramedSource(env), mContext(ctxt) {
+    : FramedSource(env), mContext(ctxt), mMaxFrameSize(0) {
 }
 
 H26XLiveFramedSource::~H26XLiveFramedSource() {
@@ -51,8 +51,10 @@ void H26XLiveFramedSource::doGetNextFrame() {
         fPresentationTime.tv_sec  = pts / 1000000;
         fPresentationTime.tv_usec = pts % 1000000;
         fDurationInMicroseconds   = duration;
+        if (mMaxFrameSize < fFrameSize) mMaxFrameSize = fFrameSize;
     }
 
     // To avoid possible infinite recursion, we need to return to the event loop to do this:
     nextTask() = envir().taskScheduler().scheduleDelayedTask(0, (TaskFunc*)FramedSource::afterGetting, this);
 }
+
